@@ -1,27 +1,14 @@
-import express from 'express';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJsdoc from 'swagger-jsdoc';
-import path from 'path';
+import { Express } from "express";
+import swaggerUi from "swagger-ui-express";
+import { generateOpenAPIDocument } from "./openAPIDocumentGenerator";
 
-const options: swaggerJsdoc.Options = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'sgroup-web-backend',
-            version: '1.0.0',
-            description: 'API documentation for SGroup Web Backend',
-        },
-        servers: [
-            {
-                url: 'http://localhost:2309/',
-                description: 'Local server',
-            }
-        ]
-    }
+export function setupSwagger(app: Express) {
+    const openAPIDocument = generateOpenAPIDocument()
+
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openAPIDocument, {
+        explorer: true,
+        swaggerOptions: {
+            url: '/api-docs.json'
+        }
+    }));
 }
-
-const swaggerSpec = swaggerJsdoc(options);
-
-export const setupSwagger = (app: express.Express) => {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-};

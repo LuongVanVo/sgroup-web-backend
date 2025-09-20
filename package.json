@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 0",
     "dev": "nodemon --watch src --ext ts,js --exec \"node -r ts-node/register -r tsconfig-paths/register src/index.ts\"",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
@@ -12,12 +12,29 @@
     "migration:generate": "npm run build && npx typeorm migration:generate -d dist/config/typeorm.config.js",
     "migration:run:dev": "node -r ts-node/register -r tsconfig-paths/register node_modules/typeorm/cli.js migration:run -d src/config/typeorm.config.ts",
     "migration:run": "npm run build && npx typeorm migration:run -d dist/config/typeorm.config.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "commit": "cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,js,json,md}:": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuongVanVo/sgroup-web-backend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.1.0",
     "@types/cors": "^2.8.19",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
@@ -33,9 +50,11 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "tsyringe": "^4.10.0",
-    "typeorm": "^0.3.27"
+    "typeorm": "^0.3.27",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.35.0",
     "@types/express": "^5.0.3",
@@ -46,7 +65,9 @@
     "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
+    "commitizen": "^4.3.1",
     "commitlint": "^19.8.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.4.0",

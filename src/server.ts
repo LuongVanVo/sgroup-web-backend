@@ -5,10 +5,13 @@ import morgan from 'morgan'
 import { pino } from 'pino'
 
 import userRouter from '@/routes/user.routes'
-import { setupSwagger } from './config/swagger'
+import healthCheckRouter from '@/routes/healthCheck.routes'
+import { setupSwagger } from '@/api-docs/swagger'
 
 import dataSource from '@/config/typeorm.config'
 import 'reflect-metadata'
+import { openAPIRouter } from './api-docs/openAPIRouter'
+import { errorHandler } from './middlewares/errorHandler'
 
 
 dataSource
@@ -35,18 +38,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // Routes
-app.use('/health-check', (req, res) => {
-    return res.status(200).send({
-        status: 'OK',
-        timestamp: new Date().toISOString(),
-        message: 'Server is healthy',
-    })
-})
+app.use('/healthy-check', healthCheckRouter)
 app.use('/api/v1/users', userRouter)
 
 // Swagger
 setupSwagger(app)
+app.use(openAPIRouter)
 
 // Error handling middleware
+app.use(errorHandler)
 
 export { app, logger }
