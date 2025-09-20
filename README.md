@@ -1,42 +1,42 @@
 # SGroup Web Backend
 
-Backend cho hệ thống SGroup, xây dựng với Node.js, TypeScript.
+Backend for the SGroup system, built with Node.js and TypeScript.
 
-## Cấu trúc dự án
+## Project structure
 
-- `src/` : Mã nguồn backend
-- `docs/` : Tài liệu dự án
-- `.husky/` : Quản lý git hooks
-- `commitlint.config.js` : Cấu hình commit lint
-- `package.json`, `package-lock.json` : Quản lý package
-- `tsconfig.json` : Cấu hình TypeScript
-- `.gitignore` : Danh sách file/thư mục bị bỏ qua bởi Git
+- `src/` : Application source code
+- `docs/` : Project documentation
+- `.husky/` : Git hooks
+- `commitlint.config.js` : Commit lint configuration
+- `package.json`, `package-lock.json` : Package management
+- `tsconfig.json` : TypeScript configuration
+- `.gitignore` : Files and folders ignored by Git
 
-## Cài đặt
+## Installation
 
 ```bash
 npm install
 ```
 
-## Chạy dự án
+## Run
 
+Start the compiled build:
 ```bash
 npm start
 ```
-Hoặc với TypeScript:
+
+Run in development with TypeScript:
 ```bash
 npm run dev
 ```
 
-## Đóng góp
+## Contributing
 
-Bạn muốn đóng góp? Hãy fork repo, tạo nhánh mới và gửi pull request!
-Liên hệ với chủ dự án hoặc tạo issue để thảo luận thêm.
+To contribute, fork the repository, create a feature branch and open a pull request. Follow the project's commit conventions and run the linters/tests before pushing.
 
-## Contributor
+## Commit hooks
 
-- LuongVanVo (Owner)
-- Copilot AI: Sẵn sàng đồng hành phát triển dự án!
+This project uses Husky + Commitizen + Commitlint. Use `npm run commit` to create a conventional commit message.
 
 ## License
 
