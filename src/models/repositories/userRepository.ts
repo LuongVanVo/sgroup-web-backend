@@ -1,5 +1,5 @@
 import dataSource from '@/config/typeorm.config';
-import User from '@/models/entities/User';
+import User from '@/models/entities/users.entity';
 
 export const getAllUserRepo = async () => {
     // query all users from the database with TypeORM

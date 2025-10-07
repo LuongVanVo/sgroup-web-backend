@@ -3,10 +3,11 @@ import { responseRegistry } from "@/api-docs/openAPIResponseBuilders";
 import { OpenApiGeneratorV3, OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { healthCheckRegistry } from "@/routes/healthCheck.routes";
 import dotenv from 'dotenv'
+import { authRegistry } from "@/routes/auth.routes";
 dotenv.config()
 
 export function generateOpenAPIDocument() {
-    const registry = new OpenAPIRegistry([healthCheckRegistry, userRegistry, responseRegistry])
+    const registry = new OpenAPIRegistry([healthCheckRegistry, userRegistry, responseRegistry, authRegistry])
     const generator = new OpenApiGeneratorV3(registry.definitions)
 
     return generator.generateDocument({
