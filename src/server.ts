@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import { pino } from 'pino'
 
 import userRouter from '@/routes/user.routes'
+import authRouter from '@/routes/auth.routes'
 import healthCheckRouter from '@/routes/healthCheck.routes'
 import { setupSwagger } from '@/api-docs/swagger'
 
@@ -40,6 +41,7 @@ app.use(express.urlencoded({ extended: true }))
 // Routes
 app.use('/healthy-check', healthCheckRouter)
 app.use('/api/v1/users', userRouter)
+app.use('/api/v1/auth', authRouter)
 
 // Swagger
 setupSwagger(app)
