@@ -8,3 +8,9 @@ export const findEmailExist = async (email: string) => {
 export const createNewUser = async (user: User) => {
     return await dataSource.getRepository(User).save(user);
 }
+
+export const findUserById = async (id: string) => {
+    return await dataSource.getRepository(User).findOneBy({
+        googleId: id
+    })
+}
