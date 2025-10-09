@@ -1,3 +1,4 @@
+// import authenticateToken from "@/middlewares/authenticationCookie";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { Request, Response } from "express";
 const router = express.Router()
@@ -13,12 +14,13 @@ healthCheckRegistry.registerPath({
     responses: {}
 })
 
+// router.get('/', authenticateToken, (req: Request, res: Response) => {
 router.get('/', (req: Request, res: Response) => {
     return res.status(200).send({
         status: 'OK',
         timestamp: new Date().toISOString(),
         message: 'Server is healthy',
-    })  
+    })
 })
 
 export default router

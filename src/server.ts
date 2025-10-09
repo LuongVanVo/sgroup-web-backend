@@ -14,6 +14,9 @@ import 'reflect-metadata'
 import { openAPIRouter } from './api-docs/openAPIRouter'
 import { errorHandler } from './middlewares/errorHandler'
 
+import session from 'express-session'
+import passport from '@/config/passport.config'
+import cookieParser from 'cookie-parser'
 
 dataSource
     .initialize()
@@ -32,6 +35,22 @@ app.use(cors({
     origin: '*',
     credentials: true,
 }))
+
+app.use(cookieParser());
+
+// Import passport config
+app.use(session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+    }
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use(helmet())
 app.use(morgan('combined'))

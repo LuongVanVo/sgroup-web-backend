@@ -13,8 +13,8 @@ class User extends DateTimeEntity  {
     @Column({ nullable: true })
     name!: string;
 
-    @Column()
-    password!: string;
+    @Column({ nullable: true })
+    password?: string;
 
     @Column({ unique: true })
     email!: string;
@@ -22,11 +22,26 @@ class User extends DateTimeEntity  {
     @Column({ nullable: true })
     avatar_url?: string;
 
+    @Column({ nullable: true, unique: true })
+    googleId?: string;
+
     @Column({ default: true })
     isActive: boolean;
 
     @Column({ default: false })
     isDeleted: boolean;
+
+    @Column({ nullable: true })
+    phone?: string;
+
+    @Column({ nullable: true })
+    address?: string;
+
+    @Column({ nullable: true })
+    verificationToken?: string;
+
+    @Column({ type: 'timestamp', nullable: true })
+    verificationTokenExpiresAt?: Date;
 
     // one to many with tokens
     @OneToMany(() => Token, token => token.user)
@@ -41,8 +56,8 @@ class User extends DateTimeEntity  {
     @OneToMany(() => Comments, comment => comment.user)
     comments: Comments[];
 
-    @OneToMany(() => CardMembers, cm => cm.user)
-    cardMembers: CardMembers[];
+    // @OneToMany(() => CardMembers, cm => cm.user)
+    // cardMembers: CardMembers[];
 }
 
 export default User
