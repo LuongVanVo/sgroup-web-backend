@@ -6,6 +6,9 @@ import { pino } from 'pino'
 
 import userRouter from '@/routes/user.routes'
 import authRouter from '@/routes/auth.routes'
+import projectRouter from '@/routes/project.routes'
+import boardRouter from '@/routes/board.routes'
+
 import healthCheckRouter from '@/routes/healthCheck.routes'
 import { setupSwagger } from '@/api-docs/swagger'
 
@@ -61,6 +64,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/healthy-check', healthCheckRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/projects', projectRouter)
+app.use('/api/v1/boards', boardRouter)
 
 // Swagger
 setupSwagger(app)

@@ -15,6 +15,9 @@ export default class Project extends DateTimeEntity {
     @Column({ nullable: true })
     description?: string;
 
+    @Column({ default: false })
+    isDeleted: boolean;
+
     @ManyToOne(() => User, { nullable: false, eager: true })
     owner: User;
 
