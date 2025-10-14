@@ -8,7 +8,7 @@ export default class Boards extends DateTimeEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column({ nullable: false })
+    @Column({ nullable: false, unique: true })
     name: string;
 
     @ManyToOne(() => Project, project => project.boards, { nullable: false, onDelete: "CASCADE" })
@@ -19,7 +19,10 @@ export default class Boards extends DateTimeEntity {
 
     @Column({ nullable: false })
     position: number;
-
+    
+    @Column({ default: false })
+    isDeleted: boolean;
+    
     @OneToMany(() => Lists, list => list.board)
     lists: Lists[];
 }

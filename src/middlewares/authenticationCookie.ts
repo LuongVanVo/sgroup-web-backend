@@ -1,66 +1,51 @@
-import { NextFunction, Request, Response } from 'express';
-import { verifyJwt } from '@/utils/jsonwebtoken';
+import { Request, Response, NextFunction } from "express";
+import { verifyJwt } from "@/utils/jsonwebtoken";
 
 interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: string;
-    email: string;
-    [key: string]: any;
-  };
+    user?: {
+        userId: string;
+        email: string;
+        [key: string]: any;
+    };
 }
 
-const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    // Lấy access token từ cookie
-    const accessToken = req.cookies?.accessToken;
-    console.log('🚀 ~ Access token from cookie:', accessToken ? 'Found' : 'Not found');
-
-    if (!accessToken) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Access token required. Please login.' 
-      });
-    }
-
+const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
     try {
-      // Verify access token
-      const decoded = verifyJwt(accessToken);
-      
-      if (!decoded || typeof decoded !== 'object') {
-        return res.status(401).json({ 
-          success: false,
-          message: 'Invalid access token' 
-        });
-      }
+        const accessToken = req.cookies?.accessToken;
+        
+        if (!accessToken) {
+            res.status(401).json({ 
+                success: false,
+                message: 'Vui lòng đăng nhập để sử dụng tính năng này'
+            });
+            return;
+        }
 
-      // Gán user info vào request để sử dụng trong controller
-      req.user = decoded as { userId: string; email: string; [key: string]: any };
-      
-      next();
+        const decoded = verifyJwt(accessToken);
+        if (!decoded || typeof decoded !== 'object') {
+            res.status(401).json({ 
+                success: false,
+                message: 'Token không hợp lệ'
+            });
+            return; 
+        }
 
-    } catch (tokenError: any) {
-      console.error('Token verification failed:', tokenError.message);
-      
-      if (tokenError.name === 'TokenExpiredError') {
-        return res.status(401).json({ 
-          success: false,
-          message: 'Access token expired. Please refresh token or login again.' 
+        // ✅ Type assertion để add user property
+        (req as AuthenticatedRequest).user = decoded as { 
+            userId: string; 
+            email: string; 
+            [key: string]: any; 
+        };
+        
+        next();
+    } catch (error) {
+        console.error('Authentication error:', error);
+        res.status(401).json({ 
+            success: false,
+            message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
         });
-      }
-      
-      return res.status(401).json({ 
-        success: false,
-        message: 'Invalid access token' 
-      });
+        return;
     }
-
-  } catch (error) {
-    console.error('Authentication middleware error:', error);
-    return res.status(500).json({ 
-      success: false,
-      message: 'Authentication error' 
-    });
-  }
 };
 
 export default authenticateToken;
