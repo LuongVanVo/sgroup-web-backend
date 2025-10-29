@@ -3,8 +3,8 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '@/models/entities/users.entity';
 import { findUserById, createNewUser, findEmailExist } from '@/models/repositories/authRepository';
 import dataSource from '@/config/typeorm.config';
+import UserRepository from '@/models/repositories/userRepository';
 import dotenv from 'dotenv';
-import { saveUser } from '@/models/repositories/userRepository';
 dotenv.config();
 
 passport.use(
@@ -27,11 +27,11 @@ passport.use(
                     // Nếu user đã tồn tại, liên kết googleId nếu chưa có
                     if (!user.googleId) {
                         user.googleId = profile.id;
-                        user = await saveUser(user);
+                        user = await UserRepository.saveUser(user);
                     }
                     // Cập nhật thông tin mới nhất
                     user.name = profile.name?.givenName + ' ' + profile.name?.familyName;
-                    user = await saveUser(user);
+                    user = await UserRepository.saveUser(user);
                 } else {
                     // Tạo user mới
                     user = await createNewUser({

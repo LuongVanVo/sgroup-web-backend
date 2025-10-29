@@ -8,6 +8,7 @@ import userRouter from '@/routes/user.routes'
 import authRouter from '@/routes/auth.routes'
 import projectRouter from '@/routes/project.routes'
 import boardRouter from '@/routes/board.routes'
+import projectMemberRouter from '@/routes/projectMember.routes'
 
 import healthCheckRouter from '@/routes/healthCheck.routes'
 import { setupSwagger } from '@/api-docs/swagger'
@@ -35,7 +36,7 @@ const logger = pino({ name: 'server backend start' })
 
 // Middleware
 app.use(cors({
-    origin: '*',
+    origin: 'http://localhost:5173',
     credentials: true,
 }))
 
@@ -66,6 +67,7 @@ app.use('/api/v1/users', userRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/projects', projectRouter)
 app.use('/api/v1/boards', boardRouter)
+app.use('/api/v1/project-members', projectMemberRouter)
 
 // Swagger
 setupSwagger(app)

@@ -1,6 +1,7 @@
 import passport from "@/config/passport.config";
 import authController from "@/controllers/authController";
 import { asyncHandler } from "@/helpers/asyncHandler";
+import authenticateToken from "@/middlewares/authenticationCookie";
 import Token from "@/models/entities/tokens.entity";
 import { saveToken } from "@/models/repositories/tokenRepository";
 import { UserSchema } from "@/models/schema/userSchema";
@@ -87,7 +88,8 @@ router.get(
         httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+        // maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+        maxAge: 1 * 60 * 1000 // 1 minute
       });
 
       // Lưu refresh token vào cookie
@@ -126,6 +128,6 @@ authRegistry.registerPath({
     description: 'Refresh access token using refresh token',
     responses: {}
 })
-router.post('/refresh-token', asyncHandler(authController.refreshToken))
+router.post('/renew-token', asyncHandler(authController.refreshToken))
 
 export default router

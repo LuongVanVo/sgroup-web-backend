@@ -17,3 +17,10 @@ export const generateJwt = (payload: object) => {
 export const verifyJwt = (token: string) => {
   return jwt.verify(token, JWT_SECRET_KEY);
 };
+
+export const generateInviteToken = (payload: object, expiresIn: string) => {
+  return jwt.sign(payload, JWT_SECRET_KEY, {
+    expiresIn: expiresIn,
+    algorithm: 'HS256',
+  } as SignOptions);
+}

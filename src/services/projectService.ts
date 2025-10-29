@@ -3,8 +3,6 @@ import { BadRequestError } from "@/core/error.response";
 import { getInfoData } from "@/utils/getInfoData";
 import ProjectRepository from "@/models/repositories/projectRepository";
 import ProjectMembers from "@/models/entities/projectMembers.entity";
-import RolePermissions from "@/models/entities/rolePermissions.entity";
-import RolePermissionRepository from "@/models/repositories/rolePermissionRepository";
 import RolesRepository from "@/models/repositories/rolesRepository";
 import ProjectMemberRepository from "@/models/repositories/projectMemberRepository";
 
@@ -39,6 +37,7 @@ class ProjectService {
         projectMember.userId = project.owner.id
         projectMember.project = newProject
         projectMember.user = project.owner
+        projectMember.status = 'accepted' // owner thì luôn là accepted
         projectMember.role = ownerRole
 
         // save project member
@@ -58,9 +57,19 @@ class ProjectService {
             throw new BadRequestError('Lấy danh sách project thất bại, vui lòng thử lại sau.')
         }
 
-        return projects.map(project => 
-            getInfoData(['id', 'name', 'description', 'owner.name', 'members', 'boards'], project)
-        )
+        return projects.map(p => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        owner: { id: p.owner.id, name: p.owner.name, email: p.owner.email },
+        boards: p.boards?.map(b => ({ id: b.id, name: b.name })) ?? [],
+        members: p.projectMembers?.map(m => ({
+            id: m.userId,
+            status: m.status,
+            role: m.role?.name,
+            user: { id: m.user?.id, name: m.user?.name, email: m.user?.email }
+        })) ?? []
+        }))
     }
 
     static updateProjectService = async (projectId: string, project: Project) => {

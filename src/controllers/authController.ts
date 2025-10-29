@@ -25,14 +25,15 @@ class AuthRepository {
         res.cookie("accessToken", data.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
-            sameSite: 'strict', // Ngăn chặn việc gửi cookie từ các trang web khác
-            maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+            sameSite: 'lax', // Ngăn chặn việc gửi cookie từ các trang web khác
+            // maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+            maxAge: 1 * 60 * 1000 // 1 phút
         })
 
         res.cookie("refreshToken", data.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
-            sameSite: 'strict', // Ngăn chặn việc gửi cookie từ các trang web khác
+            sameSite: 'lax', // Ngăn chặn việc gửi cookie từ các trang web khác
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
         })
         return new SuccessResponse({
@@ -46,7 +47,6 @@ class AuthRepository {
         if (refreshToken) {
             await AuthService.logout(refreshToken);
         }
-
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
 
@@ -56,7 +56,8 @@ class AuthRepository {
     }
 
     refreshToken = async (req: Request, res: Response, next: NextFunction) => {
-        const refreshToken = req.cookies.refreshToken;
+        const refreshToken = req.cookies.refreshToken
+        console.log('Refresh token', refreshToken);
         if (!refreshToken) {
             return res.status(400).json({ message: 'No refresh token provided' });
         }
@@ -65,13 +66,13 @@ class AuthRepository {
         res.cookie("accessToken", data.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
-            sameSite: 'strict', // Ngăn chặn việc gửi cookie từ các trang web khác
-            maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+            sameSite: 'lax', // Ngăn chặn việc gửi cookie từ các trang web khác
+            maxAge: 1 * 60 * 1000 // 1 phút
         })
         res.cookie("refreshToken", data.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
-            sameSite: 'strict', // Ngăn chặn việc gửi cookie từ các trang web khác
+            sameSite: 'lax', // Ngăn chặn việc gửi cookie từ các trang web khác
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
         })
         return new SuccessResponse({
