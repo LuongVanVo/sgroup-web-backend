@@ -3,6 +3,7 @@ import express from "express";
 import { asyncHandler } from "@/helpers/asyncHandler";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { UserSchema } from "@/models/schema/userSchema";
+import authenticateToken from "@/middlewares/authenticationCookie";
 
 const router = express.Router()
 
@@ -22,6 +23,6 @@ userRegistry.registerPath({
     }
 })
 
-router.get('/', asyncHandler(UserController.getAllUsers))
+router.get('/', authenticateToken, asyncHandler(UserController.getAllUsers))
 
 export default router

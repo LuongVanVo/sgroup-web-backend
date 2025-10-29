@@ -6,10 +6,11 @@ import dotenv from 'dotenv'
 import { authRegistry } from "@/routes/auth.routes";
 import { projectRegistry } from "@/routes/project.routes";
 import { boardRegistry } from "@/routes/board.routes";
+import { projectMemberRegistry } from "@/routes/projectMember.routes";
 dotenv.config()
 
 export function generateOpenAPIDocument() {
-    const registry = new OpenAPIRegistry([healthCheckRegistry, userRegistry, responseRegistry, authRegistry, projectRegistry, boardRegistry])
+    const registry = new OpenAPIRegistry([healthCheckRegistry, userRegistry, responseRegistry, authRegistry, projectRegistry, boardRegistry, projectMemberRegistry])
     const generator = new OpenApiGeneratorV3(registry.definitions)
 
     return generator.generateDocument({

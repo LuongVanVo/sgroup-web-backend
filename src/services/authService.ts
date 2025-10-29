@@ -9,14 +9,14 @@ import { findTokenByValue, saveToken } from "@/models/repositories/tokenReposito
 import { randomBytes } from "crypto"
 import { getMailTemplateVerifyAccount } from "@/models/repositories/mailRepository"
 import { sendActivationEmail } from "./mailService"
-import { findUserByVerificationToken, saveUser } from "@/models/repositories/userRepository"
+import UserRepository from "@/models/repositories/userRepository"
 import { getInfoData } from "@/utils/getInfoData"
 dotenv.config()
 
 class AuthService {
 
     static verifyEmail = async (code: string) => {
-        const user = await findUserByVerificationToken(code);
+        const user = await UserRepository.findUserByVerificationToken(code);
         if (!user) {
             throw new BadRequestError('User not found.');
         }
@@ -31,7 +31,7 @@ class AuthService {
         user.isActive = true;
         user.verificationToken = undefined;
         user.verificationTokenExpiresAt = undefined;
-        await saveUser(user)
+        await UserRepository.saveUser(user)
     }
 
     static register = async (User: User) => {
@@ -103,6 +103,7 @@ class AuthService {
     }
 
     static logout = async (refreshToken: string) => {
+        refreshToken = (refreshToken || '').toString().trim().replace(/^Bearer\s+/i, '');
         const tokenEntity = await findTokenByValue(refreshToken);
         if (tokenEntity) {
             tokenEntity.revoked = true;
@@ -148,6 +149,8 @@ class AuthService {
             refreshToken: newRefreshToken
         }
     }
+
+    
 }
 
 export default AuthService

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyJwt } from "@/utils/jsonwebtoken";
+import { RoleName } from "./rbac";
 
 interface AuthenticatedRequest extends Request {
     user?: {
@@ -7,14 +8,17 @@ interface AuthenticatedRequest extends Request {
         email: string;
         [key: string]: any;
     };
+    projectAuth?: {
+        projectId: string;
+        role: RoleName;
+    };
 }
 
 const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
     try {
-        const accessToken = req.cookies?.accessToken;
-        
+        const accessToken = req.cookies?.accessToken || req.headers['authorization']?.split(' ')[1];
         if (!accessToken) {
-            res.status(401).json({ 
+            res.status(401).json({
                 success: false,
                 message: 'Vui lòng đăng nhập để sử dụng tính năng này'
             });

@@ -17,6 +17,13 @@ class RolesRepository {
     static getAllRoles = async () => {
         return await dataSource.getRepository(Roles).find();
     }
+
+    static findRoleByNameWithPermissions = async (currentRole: string) => {
+        return await dataSource.getRepository(Roles).findOne({
+            where: { name: currentRole },
+            relations: ["permissions"],
+        });
+    }
 }
 
 export default RolesRepository;

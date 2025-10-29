@@ -11,7 +11,7 @@ export const sendActivationEmail = async (to: string, subject: string, html: str
         }
     })
 
-    await transporter.sendMail({
+    return await transporter.sendMail({
         from: process.env.SMTP_USER,
         to,
         subject,

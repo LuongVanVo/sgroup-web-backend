@@ -21,7 +21,13 @@ class ProjectRepository {
                 owner: { id: ownerId },
                 isDeleted: false
             },
-            relations: ['owner', 'projectMembers', 'boards'],
+            relations: [
+                'owner',
+                'boards',
+                'projectMembers',            // danh sách membership
+                'projectMembers.user',       // thông tin user
+                'projectMembers.role'        // thông tin role
+            ],
             order: { createdAt: 'DESC' }
         })
     }
@@ -32,8 +38,13 @@ class ProjectRepository {
                 id: projectId,
                 isDeleted: false
             },
-            relations: ['owner', 'projectMembers', 'boards'],
-            order: { createdAt: 'DESC' }
+            relations: [
+                'owner',
+                'boards',
+                'projectMembers',
+                'projectMembers.user',
+                'projectMembers.role'
+            ]
         })
     }
 

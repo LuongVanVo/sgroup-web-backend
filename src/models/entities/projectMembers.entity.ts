@@ -11,6 +11,12 @@ export default class ProjectMembers {
     @PrimaryGeneratedColumn("uuid")
     userId: string;
 
+    @Column({ type: 'enum', enum: ['pending', 'accepted', 'rejected'], default: 'pending' })
+    status: string;
+
+    @Column({ type: 'text', nullable: true })
+    invitationToken: string | null;
+
     @ManyToOne(() => Project, project => project.projectMembers, { nullable: false, onDelete: 'CASCADE' })
     project: Project;
 
