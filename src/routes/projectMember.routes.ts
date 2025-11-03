@@ -4,7 +4,7 @@ import { asyncHandler } from "@/helpers/asyncHandler";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { ProjectMemberSchema } from "@/models/schema/projectMemberSchema";
 import authenticateToken from "@/middlewares/authenticationCookie";
-import { loadProjectRole, checkRole, checkPermission } from "@/middlewares/rbac";
+import { loadProjectRole, checkRole } from "@/middlewares/rbac";
 import { AuthenticatedRequest } from "@/middlewares/authenticationCookie";
 
 const router = express.Router()

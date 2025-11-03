@@ -124,7 +124,7 @@ class ProjectMemberService {
         return acceptedMembers.map(m => getInfoData(['id', 'userId', 'projectId', 'status', 'role.name', 'user.id', 'user.name', 'user.email'], m))
     }
 
-    // Xóa member khỏi project
+    // Xóa member khỏi project (đang bug)
     static removeMemberFromProject = async (projectId: string, userId: string) => {
         const foundProject = await ProjectRepository.findProjectById(projectId)
         

@@ -24,3 +24,10 @@ export const generateInviteToken = (payload: object, expiresIn: string) => {
     algorithm: 'HS256',
   } as SignOptions);
 }
+
+export const generateResetTokenPassword = (payload: object, expiresIn: string) => {
+  return jwt.sign(payload, JWT_SECRET_KEY, {
+    expiresIn: expiresIn,
+    algorithm: 'HS256',
+  } as SignOptions);
+}

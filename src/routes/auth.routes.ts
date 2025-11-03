@@ -88,8 +88,8 @@ router.get(
         httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        // maxAge: 24 * 60 * 60 * 1000 // 1 ngày
-        maxAge: 1 * 60 * 1000 // 1 minute
+        maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+        // maxAge: 1 * 60 * 1000 // 1 minute
       });
 
       // Lưu refresh token vào cookie
@@ -129,5 +129,35 @@ authRegistry.registerPath({
     responses: {}
 })
 router.post('/renew-token', asyncHandler(authController.refreshToken))
+
+authRegistry.registerPath({
+    method: 'post',
+    path: '/api/v1/auth/forgot-password',
+    tags: ['Authentication'],
+    summary: 'Forgot password',
+    description: 'Send forgot password email to user',
+    responses: {}
+})
+router.post('/forgot-password', asyncHandler(authController.forgotPassword))
+
+authRegistry.registerPath({
+    method: 'post',
+    path: '/api/v1/auth/verify-otp',
+    tags: ['Authentication'],
+    summary: 'Verify OTP code',
+    description: 'Verify OTP code sent to user email for password reset',
+    responses: {}
+})
+router.post('/verify-otp', asyncHandler(authController.verifyOTP))
+
+authRegistry.registerPath({
+    method: 'post',
+    path: '/api/v1/auth/change-password',
+    tags: ['Authentication'],
+    summary: 'Reset password',
+    description: 'Reset user password',
+    responses: {}
+})
+router.post('/change-password', asyncHandler(authController.resetPassword))
 
 export default router
