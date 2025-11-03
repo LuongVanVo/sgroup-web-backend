@@ -4,13 +4,18 @@ import { createNewUser, findEmailExist } from "@/models/repositories/authReposit
 import { comparePassword, hashPassword } from "@/utils/password"
 import dotenv from 'dotenv'
 import Token from "@/models/entities/tokens.entity"
-import { generateJwt } from "@/utils/jsonwebtoken"
+import { generateJwt, generateResetTokenPassword } from "@/utils/jsonwebtoken"
 import { findTokenByValue, saveToken } from "@/models/repositories/tokenRepository"
 import { randomBytes } from "crypto"
 import { getMailTemplateVerifyAccount } from "@/models/repositories/mailRepository"
 import { sendActivationEmail } from "./mailService"
 import UserRepository from "@/models/repositories/userRepository"
 import { getInfoData } from "@/utils/getInfoData"
+import { getEmailTemplate } from "@/models/repositories/mailRepository"
+
+import { setex, get, del } from "@/helpers/redis"
+import { generateOTPCode } from "@/utils/OTPCode"
+
 dotenv.config()
 
 class AuthService {
@@ -150,7 +155,86 @@ class AuthService {
         }
     }
 
+    // Forgot password
+    static forgotPassword = async (email: string) => {
+        // find user by email
+        const foundEmail = await findEmailExist(email);
+        if (!foundEmail) throw new BadRequestError(`Error: Email not found!`);
+
+        // generate reset token
+        const expiredIn = '10m';
+        // const resetToken = generateResetTokenPassword({
+        //     userId: foundEmail.id,
+        //     email: foundEmail.email
+        // }, expiredIn);
+        const resetToken = generateOTPCode(6);
+
+        if (!resetToken) throw new BadRequestError('Error: Cannot generate reset token!');
+
+        // save token to redis 
+        const redisKey = `reset_token:${foundEmail.email}`;
+        const expriresInSeconds = Number(expiredIn.replace('m', '')) * 60; // convert minutes to seconds
+
+        const saveRedis = await setex(redisKey, resetToken, expriresInSeconds);
+        if (!saveRedis) {
+            throw new BadRequestError('Error: A reset token already exists. Please check your email or try again later.');
+        }
+
+        // send email reset password 
+        const templateEmail = await getEmailTemplate(4);
+        if (!templateEmail) throw new BadRequestError('Error: Cannot get email template!');
+
+        const htmlBody = templateEmail.content.replace('{{name}}', foundEmail.name)
+            .replace('{{expireMinutes}}', (expriresInSeconds / 60).toString())
+            .replace('{{code}}', resetToken);
+
+        await sendActivationEmail(foundEmail.email, templateEmail.subject, htmlBody);
+
+        return getInfoData(['email', 'name'], foundEmail);
+    }
+
+    // Verify OTP
+    static verifyOTP = async (email: string, code: string) => {
+        const resetToken = await get(`reset_token:${email}`);
+        if (!resetToken) 
+            throw new BadRequestError('Error: Reset token not found or expired!');
+        if (resetToken !== code) 
+            throw new BadRequestError('Error: Invalid reset token!');
+        return true;
+    }
     
+    // Reset password
+    static resetPassword = async (email: string, newPassword: string, confirmPassword: string, token: string) => {
+        // find user by email 
+        const foundUser = await findEmailExist(email);
+        if (!foundUser) 
+            throw new BadRequestError('Error: User not found!');
+        
+        // check new password and confirm password match ?
+        if (newPassword !== confirmPassword) 
+            throw new BadRequestError('Error: New password and confirm password do not match!');
+
+        // check reset token and email valid ?
+        const resetToken = await get(`reset_token:${email}`);
+        if (!resetToken) 
+            throw new BadRequestError('Error: Reset token not found or expired!');
+        // if (resetToken !== token) 
+        //     throw new BadRequestError('Error: Invalid reset token!');
+
+        // hash new password
+        const hashedNewPassword = await hashPassword(newPassword);
+
+        // update password
+        foundUser.password = hashedNewPassword;
+        await UserRepository.saveUser(foundUser);
+
+        // delete reset token from redis
+        const delToken = await del(`reset_token:${email}`);
+        if (delToken === 0) 
+            throw new BadRequestError('Error: Cannot delete reset token from redis!');
+
+        return getInfoData(['id', 'email', 'name', 'isActive', 'createdAt', 'updatedAt'], foundUser);
+    }
 }
 
 export default AuthService

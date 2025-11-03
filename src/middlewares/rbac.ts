@@ -53,6 +53,8 @@ export const checkRole = (allowedRoles: string[]) => {
         })
       }
 
+      if (currentRole === 'owner') return next(); // Owner luôn có quyền
+
       if (!allowedRoles.includes(currentRole)) {
         return res.status(403).json({
           success: false,

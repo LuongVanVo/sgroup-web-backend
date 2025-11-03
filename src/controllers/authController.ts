@@ -26,8 +26,8 @@ class AuthRepository {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
             sameSite: 'lax', // Ngăn chặn việc gửi cookie từ các trang web khác
-            // maxAge: 24 * 60 * 60 * 1000 // 1 ngày
-            maxAge: 1 * 60 * 1000 // 1 phút
+            maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+            // maxAge: 1 * 60 * 1000 // 1 phút
         })
 
         res.cookie("refreshToken", data.refreshToken, {
@@ -77,6 +77,36 @@ class AuthRepository {
         })
         return new SuccessResponse({
             message: 'Refresh token successfully',
+            metadata: data
+        }).send(res)
+    }
+
+    // Forgot password
+    forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+        const { email } = req.body;
+        const data = await AuthService.forgotPassword(email);
+        return new SuccessResponse({
+            message: 'Send forgot password email successfully',
+            metadata: data
+        }).send(res)
+    }
+
+    // Verify OTP
+    verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
+        const { email, code } = req.body;
+        const data = await AuthService.verifyOTP(email, code);
+        return new SuccessResponse({
+            message: 'Verify OTP successfully',
+            metadata: data
+        }).send(res);
+    }
+
+    // Reset password
+    resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+        const { email, newPassword, confirmPassword, token } = req.body;
+        const data = await AuthService.resetPassword(email, newPassword, confirmPassword, token);
+        return new SuccessResponse({
+            message: 'Reset password successfully',
             metadata: data
         }).send(res)
     }
