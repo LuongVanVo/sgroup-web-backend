@@ -72,6 +72,27 @@ class ProjectService {
         }))
     }
 
+    // Lấy tất cả project của 1 member
+    static getAllProjectsOfMemberService = async (userId: string) => {        // lấy tất cả project mà user là member
+        const projectMembers = await ProjectMemberRepository.getProjectsByUserId(userId);
+        if (!projectMembers) {
+            throw new BadRequestError('Lấy danh sách project thất bại, vui lòng thử lại sau.');
+        }
+
+        const members = await ProjectMemberRepository.getMembersByProjectId(projectMembers.map(pm => pm.project.id)[0]);
+        return projectMembers.map(pm => ({
+            id: pm.project.id,
+            name: pm.project.name,  
+            description: pm.project.description,
+            owner: { id: pm.project.owner.id, name: pm.project.owner.name, email: pm.project.owner.email },
+            boards: pm.project.boards?.map(b => ({ id: b.id, name: b.name,  })) ?? [],
+            // get all members of project
+            members: members.map(m => ({
+                user: { id: m.user?.id, name: m.user?.name, email: m.user?.email }
+            })) ?? []
+        }))
+    }
+
     static updateProjectService = async (projectId: string, project: Project) => {
         // check name exists: project cùng owner không được trùng tên, còn 2 user khác nhau thì được trùng tên
         if (project.name) {

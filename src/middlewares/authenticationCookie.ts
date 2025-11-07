@@ -34,7 +34,6 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction): voi
             return; 
         }
 
-        // ✅ Type assertion để add user property
         (req as AuthenticatedRequest).user = decoded as { 
             userId: string; 
             email: string; 

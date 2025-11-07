@@ -8,6 +8,7 @@ import { UserSchema } from "@/models/schema/userSchema";
 import { generateJwt } from "@/utils/jsonwebtoken";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express from "express";
+import { Request, Response } from "express";
 
 
 const router = express.Router()
@@ -160,4 +161,12 @@ authRegistry.registerPath({
 })
 router.post('/change-password', asyncHandler(authController.resetPassword))
 
-export default router
+// check authentication status
+router.get('/me', authenticateToken, (req: Request, res: Response) => {
+    res.status(200).json({
+      message: "Authenticated",
+      user: (req as any).user
+    })
+})
+
+export default router;

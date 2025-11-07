@@ -22,7 +22,17 @@ userRegistry.registerPath({
         // [statusCodes.INTERNAL_SERVER_ERROR.toString()]: commonErrorResponses[500]
     }
 })
-
 router.get('/', authenticateToken, asyncHandler(UserController.getAllUsers))
+
+
+userRegistry.registerPath({
+    method: 'get',
+    path: '/api/v1/users/id',
+    tags: ['Users'],
+    summary: 'Get user by ID',
+    description: 'Retrieve a user by their unique ID',
+    responses: {}
+})
+router.get('/id', authenticateToken, asyncHandler(UserController.getUserById));
 
 export default router
