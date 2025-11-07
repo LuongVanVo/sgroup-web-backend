@@ -18,6 +18,10 @@ class UserRepository {
     static findUserById = async (id: string) => {
         return await dataSource.getRepository(User).findOne({ where: { id: id } });
     }
+
+    static getUserByIdRepo = async (id: string) => {
+        return await dataSource.getRepository(User).findOne({ where: { id: id, isActive: true } });
+    }
 }
 
 export default UserRepository;

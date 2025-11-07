@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { AuthenticatedRequest } from "@/middlewares/authenticationCookie";
 import Project from "@/models/entities/projects.entity";
 import { BadRequestError } from "@/core/error.response";
+import { get } from "lodash";
 
 class projectController {
     createProjectController = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -57,6 +58,18 @@ class projectController {
         
         return new SuccessResponse({
             message: 'Xóa project thành công',
+            metadata: data
+        }).send(res);
+    }
+
+    getAllProjectsOfMemberController = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        const userId = req.user?.userId as string;
+        if (!userId) {
+            return next(new Error('User ID not found in cookies'));
+        }
+        const data = await ProjectService.getAllProjectsOfMemberService(userId)
+        return new SuccessResponse({
+            message: 'Lấy danh sách project thành công',
             metadata: data
         }).send(res);
     }

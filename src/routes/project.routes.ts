@@ -4,6 +4,8 @@ import express from "express";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { ProjectSchema } from "@/models/schema/projectSchema";
 import authenticateToken from "@/middlewares/authenticationCookie";
+import { checkRole, loadProjectRole } from "@/middlewares/rbac";
+import { AuthenticatedRequest } from "@/middlewares/authenticationCookie";
 
 const router = express.Router();
 router.use(authenticateToken as express.RequestHandler);
@@ -53,5 +55,20 @@ projectRegistry.registerPath({
     responses: {}
 })
 router.delete('/delete-project/:id', asyncHandler(projectController.deleteProjectController))
+
+projectRegistry.registerPath({
+    method: 'get',
+    path:  '/api/v1/projects/projects-of-member',
+    tags: ['Project'],
+    summary: 'Get all projects of member',
+    description: 'Retrieve all projects of a member',
+    security: [{ cookieAuth: [] }],
+    responses: {}
+})
+router.get('/projects-of-member', 
+    authenticateToken,
+    // loadProjectRole((req: AuthenticatedRequest) => req.user?.userId as string) as unknown as express.RequestHandler,
+    // checkRole(['member', 'owner']) as unknown as express.RequestHandler,
+    asyncHandler(projectController.getAllProjectsOfMemberController))
 
 export default router;

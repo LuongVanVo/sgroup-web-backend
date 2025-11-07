@@ -5,9 +5,9 @@ dotenv.config();
 
 // Configuration for Redis connection
 const redisConfig = {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 18822,
-    password: process.env.REDIS_PASSWORD || '',
+    host: process.env.REDIS_HOST || '127.0.0.1',
+    port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+    password: process.env.REDIS_PASSWORD || undefined,
     username: process.env.REDIS_USERNAME || 'default',
 }
 

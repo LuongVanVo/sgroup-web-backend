@@ -1,5 +1,6 @@
 import ProjectMembers from "@/models/entities/projectMembers.entity";
 import dataSource from "@/config/typeorm.config";
+import { use } from "passport";
 
 class ProjectMemberRepository {
     static createProjectMember = async (projectMember: ProjectMembers) => {
@@ -42,6 +43,14 @@ class ProjectMemberRepository {
             where: { project: { id: projectId } },
             relations: ['user', 'role']
         });
+    }
+
+    // Lấy tất cả project mà user là member
+    static getProjectsByUserId = async (userId: string) => {
+        return await dataSource.getRepository(ProjectMembers).find({
+            where: { user: { id: userId } },
+            relations: ['project', 'role', 'project.boards', 'user']
+        })
     }
 }
 
